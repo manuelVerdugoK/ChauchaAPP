@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block contenido%}   
+
+{% load crispy_forms_tags %}
+
+<div class="container">
+  <div class="row box_login">
+    <div class="col-lg-6">
+      <h1 class="login_title">Iniciar Sesión</h1>
+      <form method="post">
+        {% csrf_token %}
+        {% crispy form %}
+      </form>
+    </div>
+    <div class="col-lg-6">
+      <h1>Recomendaciones de seguridad</h1>
+      <ol>
+        <li>Utiliza contraseñas seguras y diferentes para cada cuenta.</li>
+        <li>Evita hacer clic en enlaces sospechosos o abrir correos electrónicos de remitentes desconocidos.</li>
+        <li>Mantén tus dispositivos y software actualizados para protegerte de vulnerabilidades conocidas.</li>
+        <li>No compartas información personal sensible en línea, como números de seguridad social o datos bancarios.</li>
+        <li>Utiliza una solución antivirus confiable y realiza análisis periódicos de tu sistema.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}

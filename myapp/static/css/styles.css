@@ -1,0 +1,21 @@
+#logo{
+    width: 100px;
+}
+
+.explicativo{
+    align-items: center;
+    width: 100%;
+    background-color: rgb(216, 211, 100);
+}
+.img_inicio{
+    width: 700px;
+    height: 500px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-radius: 15px;
+    padding:35px;
+}
+.p2{
+    font-size: 18px;
+}
+
