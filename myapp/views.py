@@ -11,7 +11,13 @@ from .models import UserProfile
 
 from .forms import RegistrationForm
 
+from django.urls import reverse_lazy
+from django.contrib.auth.views import LoginView
+from .forms import LoginForm
+
+
 # Create your views here.
+    
 
 def index(request):
     return render(request,'Index/index.html')
@@ -19,7 +25,8 @@ def index(request):
 class CustomLoginView(LoginView):
     template_name = 'registration/login.html'
     authentication_form = LoginForm
-
+    def get_success_url(self):
+        return reverse_lazy('aplicacion:index')
 
 
 def register(request):
