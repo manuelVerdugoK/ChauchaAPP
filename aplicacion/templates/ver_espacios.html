@@ -1,0 +1,23 @@
+{% extends 'baseApp.html' %}
+
+{% block titulo%}
+{% load static%}
+<h1>Mis Espacios</h1>
+{% endblock %}
+
+{% block contenido %}
+<div class="row">
+    {% for espacio in espacios %}
+    <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+            <img src="{% static 'img/work.png' %}" class="card-img-top" alt="...">
+            <div class="card-body">
+                <h5 class="card-title">{{ espacio.nombre }}</h5>
+                <p class="card-text">{{ espacio.codigo_invitacion }}</p>
+                <a href="#" class="btn btn-secondary btn-card">Entrar</a>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

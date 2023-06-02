@@ -1,19 +1,12 @@
 from django.shortcuts import render, redirect
 from .forms import LoginForm
 from django.contrib.auth.views import LoginView
-
 from django.contrib import messages
 from .forms import RegistrationForm
 from .models import UserProfile
-
-
-
-
 from .forms import RegistrationForm
-
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView
-from .forms import LoginForm
 
 
 # Create your views here.
@@ -28,13 +21,12 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return reverse_lazy('aplicacion:index')
 
-
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            return redirect('verificacion', username=user.username)
+            return redirect('myapp:verificacion', username=user.username)
     else:
         form = RegistrationForm()
     return render(request, 'registration/register.html', {'form': form})
@@ -49,6 +41,3 @@ def verify(request, username):
         else:
             messages.error(request, 'Invalid verification code.')
     return render(request, 'registration/verify.html', {'username': username})
-
-
-

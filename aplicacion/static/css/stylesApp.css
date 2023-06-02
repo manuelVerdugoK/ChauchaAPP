@@ -11,10 +11,12 @@
     /* ===== Colors ===== */
     --body-color: #E4E9F7;
     --sidebar-color: #FFF;
-    --primary-color: #695CFE;
+    --primary-color: #ffa600;
     --primary-color-light: #F6F5FF;
     --toggle-color: #DDD;
     --text-color: #707070;
+    --color-card-img:rgb(246, 145, 12);
+    --color-card-body: rgb(255, 255, 255);
 
     /* ====== Transition ====== */
     --tran-03: all 0.2s ease;
@@ -39,8 +41,11 @@ body.dark{
     --sidebar-color: #242526;
     --primary-color: #3a3b3c;
     --primary-color-light: #3a3b3c;
-    --toggle-color: #fff;
-    --text-color: #ccc;
+    --toggle-color: #ffffffa3;
+    --text-color: #ffa600;
+
+    --color-card-img:rgb(133, 131, 120);
+    --color-card-body: rgb(91, 91, 91);
 }
 
 /* ===== Sidebar ===== */
@@ -164,6 +169,7 @@ body.dark .sidebar header .toggle{
 
 .sidebar .menu{
     margin-top: 40px;
+    margin-left: -30px;
 }
 
 .sidebar li.search-box{
@@ -186,6 +192,7 @@ body.dark .sidebar header .toggle{
     transition: var(--tran-05);
 }
 .sidebar li a{
+    
     list-style: none;
     height: 100%;
     background-color: transparent;
@@ -245,9 +252,10 @@ body.dark .mode .sun-moon i.moon{
     opacity: 0;
 }
 
+
 .menu-bar .bottom-content .toggle-switch{
     position: absolute;
-    right: 0;
+    right: -15px;
     height: 100%;
     min-width: 60px;
     display: flex;
@@ -292,18 +300,54 @@ body.dark .switch::before{
     background-color: var(--body-color);
     transition: var(--tran-05);
 }
-.home .text{
-    font-size: 30px;
+
+
+.home .titulo{
+    font-size: 25px;
     font-weight: 500;
     color: var(--text-color);
     padding: 12px 60px;
 }
+
+.home .text-parrafo{
+    font-size: 17px;
+    font-weight: 500;
+    color: var(--text-color);
+    padding: 12px 60px;
+}
+
 
 .sidebar.close ~ .home{
     left: 78px;
     height: 100vh;
     width: calc(100% - 78px);
 }
-body.dark .home .text{
+body.dark .home .titulo .text-parrafo{
     color: var(--text-color);
+}
+
+
+.card{
+    margin-bottom: 15px;
+}
+.card .card-img-top{
+    padding: 55px;
+    background:var(--color-card-img)
+}
+
+.card .card-body{
+    background:var(--color-card-body)
+
+}
+.btn-card{
+    width: 100%;
+}
+#label-code{
+    text-align: end;
+}
+#input-code{
+    background: rgba(128, 128, 128, 0.323);
+    color:rgb(138, 134, 134);
+    border: none;
+    border-radius: 20px;
 }
