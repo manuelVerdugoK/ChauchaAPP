@@ -20,6 +20,10 @@
 
     {% load crispy_forms_tags %}
     {{ form.media }}
+
+    <!-- CSS Y JS REQUERIDOS POR TEMPLATE -->
+    {% block recursos %}
+    {% endblock %}
 </head>
 <body>
     <nav class="sidebar close">
@@ -76,7 +80,7 @@
                     </li>
 
                     <li class="nav-link">
-                        <a href="#">
+                        <a href="{% url 'aplicacion:hoja_financiera' %}">
                             <i class='bx bx-file-find icon'></i>
                             <span class="text nav-text">Ficha información</span>
                         </a>
@@ -169,40 +173,43 @@
 
 
     <!-- MODAL 2 -->
-
     <div class="modal fade" id="UnirseEspacio" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h1 class="modal-title fs-5" id="exampleModalLabel">Unirse a un espacio</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-
-            <div class="modal-body">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12">
-                            <p>Para poder ingresar a un espacio existente debe ingresar el código de invitación, asegurese de que el código que le entregaron tiene 10 caracteres.</p>
-                        </div>
-                        <hr>
-                        <label for="codigo" id="label-code" class="col-sm-12 col-md-4 col-lg-4">Ingrese su código</label>
-                        <input name="codigo" type="text"id="input-code" class="col-sm-12 col-md-6 col-lg-6" minlength="10" size="10" maxlength="10"></input>
-                        
+            <div class="modal-content">
+                <form method="POST" action="{% url 'aplicacion:unirse_espacio' %}">
+                    {% csrf_token %}
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Unirse a un espacio</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                </div>
+                    <div class="modal-body">
+                        {% if error %}
+                            <div class="alert alert-danger">{{ error }}</div>
+                        {% endif %}
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-12">
+                                    <p>Para poder ingresar a un espacio existente debe ingresar el código de invitación, asegúrese de que el código que le entregaron tiene 10 caracteres.</p>
+                                </div>
+                                <hr>
+                                <label for="codigo" id="label-code" class="col-sm-12 col-md-4 col-lg-4">Ingrese su código</label>
+                                <input name="codigo" type="text" id="input-code" class="col-sm-12 col-md-6 col-lg-6" minlength="10" size="10" maxlength="10"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Aceptar</button>
+                    </div>
+                </form>
             </div>
-
-
-            <div class="modal-footer">
-              <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-              <button type="button" class="btn btn-success">Aceptar</button>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
 
     <!-- Cierre modal 2-->  
+
+
+
 
 
 

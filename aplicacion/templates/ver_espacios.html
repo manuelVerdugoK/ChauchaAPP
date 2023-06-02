@@ -7,6 +7,8 @@
 
 {% block contenido %}
 <div class="row">
+    <p>Aquí podrás ver ordenadas todos los espacios a los que perteneces, haz click en 'Entrar' para ingresar a ver detalles de cada espacio.</p>
+    <hr>
     {% for espacio in espacios %}
     <div class="col-md-4">
         <div class="card" style="width: 18rem;">
@@ -14,7 +16,8 @@
             <div class="card-body">
                 <h5 class="card-title">{{ espacio.nombre }}</h5>
                 <p class="card-text">{{ espacio.codigo_invitacion }}</p>
-                <a href="#" class="btn btn-secondary btn-card">Entrar</a>
+                <p class="card-text">{{ espacio.descripcion }}</p>
+                <a href="{% url 'aplicacion:miEspacio' %}" class="btn btn-secondary btn-card">Entrar</a>
             </div>
         </div>
     </div>

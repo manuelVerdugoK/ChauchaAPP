@@ -1,0 +1,67 @@
+{% extends 'baseApp.html' %}
+
+{% block titulo%}
+{% load static%}
+<h1>Espacio '{{espacio.nombre}}' </h1>
+{% endblock %}
+
+{% block contenido %}
+<div class="container">
+<div class="row">
+    <p>Aquí podrás ver el detalle de ingresos y gastos generados en tu hoja de información</p>
+    <div class="col-sm-12 col-md-6 col-lg-4 informacion">
+        
+        <div class="row">
+            <h3>Información General</h3>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Nro de participantes</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{total_usuarios}}</label>
+
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Participantes</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">
+                <ul>
+                    {% for usuarios in usuarios%}
+                    <li>{{usuarios}}</li>
+                    {% endfor %}
+                </ul>
+               
+            </label>
+            
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Ingresos totales</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Egresos totales</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Balance</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+        </div>
+    </div>
+
+    <div class="col-sm-12 col-md-6 col-lg-8 informacion">
+        <div class="row">
+            <h3>Grafico general</h3>
+            <div class="grafico-torta">
+                {{ plot_div|safe }}
+            </div>
+
+        </div>
+    </div>
+
+    
+</div>
+
+    <div class="row">
+        <div class="col-sm-12 col-md-12 col-lg-12 informacion">
+            <div class="row">
+                <h3>Graficos</h3>
+                
+                <div class="grafico-barras">
+                    {{ bar_plot_div|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

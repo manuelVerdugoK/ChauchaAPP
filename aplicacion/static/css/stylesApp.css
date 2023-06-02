@@ -9,7 +9,7 @@
 
 :root{
     /* ===== Colors ===== */
-    --body-color: #E4E9F7;
+    --body-color: #ffffff;
     --sidebar-color: #FFF;
     --primary-color: #ffa600;
     --primary-color-light: #F6F5FF;
@@ -350,4 +350,19 @@ body.dark .home .titulo .text-parrafo{
     color:rgb(138, 134, 134);
     border: none;
     border-radius: 20px;
+}
+.grupo-botones {
+    display: flex;
+    justify-content: flex-end;
+}
+.grupo-botones button {
+    margin-left: 15px;
+    margin-bottom: 15px;
+}
+.informacion{
+    border-radius: 5px;
+    border:2px solid rgba(125, 119, 119, 0.516);
+}
+.box-info{
+    border:1px solid rgba(125, 119, 119, 0.516);
 }

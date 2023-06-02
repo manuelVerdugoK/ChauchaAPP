@@ -1,0 +1,175 @@
+{% extends 'baseApp.html' %}
+{% load static %}
+
+
+{% block recursos %}
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.css" />
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+  
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.js"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+<script src="{% static 'js/tables.js' %}"></script> <!-- Enlace al archivo 'tables.js' en tu directorio estático -->
+{% endblock %}
+
+
+
+
+{% block titulo%}
+{% load static%}
+<h1>Mi Hoja de información financiera</h1>
+{% endblock %}
+
+
+
+
+{% block contenido %}
+<div class="row">
+<p>Aquí podrás ver toda la información de tu hoja de información financiera.<br></p>
+<p> Asegurate de mantener tu información actualizada para que podamos entregarte las mejores metricas, recomendaciones y consejos!</p>
+<hr>
+<div class="grupo-botones">
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#AgregarIngreso">Agregar Ingreso</button>
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#AgregarEgreso">Agregar Egreso</button>
+</div>
+
+
+    <article class="col-lg-6">
+        <h3>Tabla de ingresos</h3>
+        <table id="tabla-ingresos" class="display">
+            <thead>
+                <tr>
+                    <th>Tipo de Ingreso</th>
+                    <th>Fuente de Ingreso</th>
+                    <th>Monto de Ingreso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ingreso in ingresos %}
+                <tr>
+                    <td>{{ ingreso.tipo_ingreso }}</td>
+                    <td>{{ ingreso.fuente_ingreso }}</td>
+                    <td>{{ ingreso.monto_ingreso }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </article>
+
+    <article class="col-lg-6">
+        <h3>Tabla de egresos</h3>
+        <table id="tabla-egresos" class="display">
+            <thead>
+                <tr>
+                    <th>Tipo de Ingreso</th>
+                    <th>Fuente de Ingreso</th>
+                    <th>Monto de Ingreso</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for egresos in egresos %}
+                <tr>
+                    <td>{{ egresos.tipo_egreso }}</td>
+                    <td>{{ egresos.fuente_egreso }}</td>
+                    <td>{{ egresos.monto_egreso }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </article>
+
+
+
+
+
+
+
+
+
+    <!-- MODAL INGRESO -->
+
+        <div class="modal fade" id="AgregarIngreso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'aplicacion:hoja_financiera' %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar un nuevo Ingreso</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% if error %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endif %}
+                            <div class="container">
+                                <div class="row">
+
+                                    {% load crispy_forms_tags %}
+
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form|crispy }}
+                                    </form>
+                                    <button type="submit" class="btn btn-success">Aceptar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- CIERRE MODAL INGRESO -->
+
+
+
+
+    <!-- MODAL EGRESO -->
+
+        <div class="modal fade" id="AgregarEgreso" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <form method="POST" action="{% url 'aplicacion:hoja_financiera' %}">
+                        {% csrf_token %}
+                        <div class="modal-header">
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar un nuevo Ingreso</h1>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            {% if error %}
+                                <div class="alert alert-danger">{{ error }}</div>
+                            {% endif %}
+                            <div class="container">
+                                <div class="row">
+
+                                    {% load crispy_forms_tags %}
+
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        {{ form2|crispy }}
+                                    </form>
+                                    <button type="submit" class="btn btn-success">Aceptar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                            
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    <!-- CIERRE MODAL EGRESO -->
+
+</div>
+{% endblock %}
