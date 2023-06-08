@@ -15,9 +15,10 @@
             <img src="{% static 'img/work.png' %}" class="card-img-top" alt="...">
             <div class="card-body">
                 <h5 class="card-title">{{ espacio.nombre }}</h5>
-                <p class="card-text">{{ espacio.codigo_invitacion }}</p>
+                
                 <p class="card-text">{{ espacio.descripcion }}</p>
-                <a href="{% url 'aplicacion:miEspacio' %}" class="btn btn-secondary btn-card">Entrar</a>
+                <a href="{% url 'aplicacion:miEspacio' espacio.id %}" class="btn btn-secondary btn-card">Entrar</a>
+
             </div>
         </div>
     </div>

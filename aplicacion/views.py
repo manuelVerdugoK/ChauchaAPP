@@ -4,10 +4,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .forms import EspacioForm,IngresoForm,EgresoForm
 from .models import Espacio,Ingreso,HojaInformacionFinanciera,Egreso
-
+from django.shortcuts import get_object_or_404
 import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 
+from myapp.models import UserProfile
+from django.contrib.auth.models import User
+
+
+from django.core.mail import send_mail
+from django.conf import settings
 
 from django.db.models import Sum
 import matplotlib.pyplot as plt 
@@ -109,13 +115,19 @@ def hoja_informacion_financiera(request):
 
 
 
-def mi_espacio(request):
-    espacio = Espacio.objects.get(usuarios=request.user)
+def mi_espacio(request,espacio_id):
+    espacio = Espacio.objects.get(usuarios=request.user,id=espacio_id)
+    creador = espacio.propietario.username
     usuarios = espacio.usuarios.all()
+    print(type(creador))
+    print(type(usuarios))
+
+    
 
     # Obtener todos los ingresos y egresos de los usuarios
     ingresos = Ingreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
     egresos = Egreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+
 
     # Calcular el total de ingresos y egresos por tipo
     total_ingresos_tipo = ingresos.values('tipo_ingreso').annotate(total=Sum('monto_ingreso')).order_by('-total')
@@ -157,9 +169,17 @@ def mi_espacio(request):
     # Crear el gráfico de barras dinámico para los ingresos por tipo
     bar_plot_div = crear_grafico_barras_dinamico(tipos_ingreso, montos_ingreso, 'Distribución de Ingresos por Tipo')
 
-    
+    total_ingreso_grupo = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
+    total_egreso_grupo = egresos.aggregate(total=Sum('monto_egreso'))['total']
 
-    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios, 'plot_div': plot_div,'bar_plot_div': bar_plot_div})
+    #subtotal = total_ingreso_grupo - total_egreso_grupo
+
+    if total_ingreso_grupo is not None and total_egreso_grupo is not None:
+        subtotal = total_ingreso_grupo - total_egreso_grupo
+    else:
+        subtotal = None  # O cualquier valor predeterminado que desees asignar cuando no haya valores disponibles
+
+    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div})
 
 
 def crear_grafico_barras_dinamico(labels, values, title):
@@ -175,9 +195,30 @@ def crear_grafico_barras_dinamico(labels, values, title):
 
 
 
+def eliminar_usuario(request, espacio_id, usuario_id):
+    # Obtener el objeto Espacio correspondiente al espacio_id
+    espacio = Espacio.objects.get(id=espacio_id)
+    # Obtener el usuario a eliminar
+    usuario = UserProfile.objects.get(id=usuario_id).user
+    # Eliminar el usuario del espacio
+    espacio.usuarios.remove(usuario)
+    return redirect('aplicacion:miEspacio')
 
 
+def enviar_invitacion(request, espacio_id):
+    if request.method == 'POST':
+        espacio = Espacio.objects.get(id=espacio_id)
+        correo = request.POST.get('correo')
 
+        # Lógica para enviar la invitación por correo electrónico
+        subject = 'Invitación a unirse al grupo'
+        message = f'Hola, has sido invitado a unirte al grupo "{espacio.nombre}". Para unirte, visita el siguiente enlace: {request.build_absolute_uri(reverse("aplicacion:unirse_espacio"))}'
+        from_email = settings.DEFAULT_FROM_EMAIL
+        recipient_list = [correo]
 
+        send_mail(subject, message, from_email, recipient_list)
 
+        # Realiza cualquier redireccionamiento o respuesta necesaria después de enviar la invitación
+        return redirect('aplicacion:mi_espacio', espacio_id=espacio_id)
 
+    return redirect('aplicacion:index')

@@ -1,43 +1,105 @@
 {% extends 'baseApp.html' %}
+{% load static%}
 
 {% block titulo%}
-{% load static%}
 <h1>Espacio '{{espacio.nombre}}' </h1>
 {% endblock %}
+
+
+
 
 {% block contenido %}
 <div class="container">
 <div class="row">
     <p>Aquí podrás ver el detalle de ingresos y gastos generados en tu hoja de información</p>
-    <div class="col-sm-12 col-md-6 col-lg-4 informacion">
+
+    <div class="col-sm-12 col-md-6 col-lg-6 informacion">
         
         <div class="row">
             <h3>Información General</h3>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Nro de participantes</label>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{total_usuarios}}</label>
 
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Participantes</label>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Grupo creado por</label>
+            <div class="col-sm-12 col-md-6 col-lg-6 box-info">
                 <ul>
-                    {% for usuarios in usuarios%}
-                    <li>{{usuarios}}</li>
-                    {% endfor %}
+                    <li>{{creador}}</li>
                 </ul>
-               
-            </label>
+            </div>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">Integrantes del grupo</label>
+            <div class="col-sm-12 col-md-6 col-lg-6 box-info">
+                <ul>
+                {% if usuarios %}
+                    {% for usuario in usuarios %}
+                    
+                    {% if usuario != espacio.propietario%}
+                            {% if request.user.username == creador %}
+                            <li>{{ usuario }} <a href="{% url 'aplicacion:eliminar_usuario' espacio.id usuario.id %}">Eliminar</a></li>
+                            {% else %}
+                                <li>{{ usuario }}</li>
+                            {% endif %}
+                    {%endif %}
+
+
+                    {% endfor %}
+                {% else %}
+                    <li>No hay más miembros en el grupo</li>
+                {% endif %}
+                </ul>
+            </div>
             
             <label class="col-sm-12 col-md-6 col-lg-6 box-info">Ingresos totales</label>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">
+                
+            {% if total_ing is not None %}
+                {{total_ing}}
+            {% else %}
+                0
+            {% endif %}
+            </label>
 
             <label class="col-sm-12 col-md-6 col-lg-6 box-info">Egresos totales</label>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">
+
+            {% if total_eg is not None %}
+                {{ total_eg }}
+            {% else %}
+                0
+            {% endif %}
+            </label>
 
             <label class="col-sm-12 col-md-6 col-lg-6 box-info">Balance</label>
-            <label class="col-sm-12 col-md-6 col-lg-6 box-info">{{5}}</label>
+            <label class="col-sm-12 col-md-6 col-lg-6 box-info">
+            {% if subtotal is not None %}
+                {{ subtotal }}
+            {% else %}
+                0
+            {% endif %}
+            </label>
         </div>
+        
     </div>
+    <div class="col-sm-12 col-md-6 col-lg-6">
+        <div class="row invitacion">
+            <p>Invita a los tuyos vía email o comparte tu código de grupo :</p>
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <p>Ingresa el correo de tu invitado para enviarle una invitación directa!</p>
+                <form method="POST" action="{% url 'aplicacion:enviar_invitacion' espacio.id %}">
+                    {% csrf_token %}
+                        <input type="email" name="correo" placeholder="Correo electrónico del invitado" required>
+                        <button type="submit">Enviar invitación</button>
+                </form>
+            </div>
+            <div class="col-sm-12 col-md-12 col-lg-12 invitacion">
+                <p>Comparte tu código para que los demás puedan unirse!</p>
+                <input id="codigoInvitacion" class="attractive-input" type="text" value="{{ espacio.codigo_invitacion }}" disabled />
+              </div>
+            
+        </div>
 
-    <div class="col-sm-12 col-md-6 col-lg-8 informacion">
+
+    </div>
+    <hr>
+
+    <div class="col-sm-12 col-md-12 col-lg-12 informacion">
         <div class="row">
             <h3>Grafico general</h3>
             <div class="grafico-torta">
@@ -47,7 +109,8 @@
         </div>
     </div>
 
-    
+
+
 </div>
 
     <div class="row">
@@ -65,3 +128,5 @@
 
 
 {% endblock %}
+
+

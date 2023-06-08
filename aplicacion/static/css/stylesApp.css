@@ -360,9 +360,73 @@ body.dark .home .titulo .text-parrafo{
     margin-bottom: 15px;
 }
 .informacion{
+    margin-top: 25px;
     border-radius: 5px;
     border:2px solid rgba(125, 119, 119, 0.516);
 }
 .box-info{
     border:1px solid rgba(125, 119, 119, 0.516);
 }
+
+.invitacion{
+    margin-bottom: 20px;
+}
+
+.attractive-input {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    color: #666;
+    font-family: Arial, sans-serif;
+}
+
+
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 20px 0;
+  }
+
+  .invitacion {
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 5px;
+  }
+
+  p {
+    margin: 10px 0;
+  }
+
+  /* Estilos para el formulario de envío de invitación */
+  form {
+    margin-top: 10px;
+  }
+
+  input[type="email"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  button[type="submit"] {
+    margin-top: 10px;
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  /* Estilos para el input deshabilitado */
+  .attractive-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    color: #666;
+  }

@@ -10,5 +10,8 @@ urlpatterns = [
     path('MisEspacios/',login_required(views.ver_espacios),name="ver_espacios"),
     path('unirse-espacio/', views.unirse_espacio, name='unirse_espacio'),
     path('Mi-Hoja-financiera/',views.hoja_informacion_financiera,name="hoja_financiera"),
-    path('Mi-Espacio/',views.mi_espacio,name='miEspacio')
+    path('Mi-Espacio/<int:espacio_id>/', views.mi_espacio, name='miEspacio'),
+
+    path('eliminar/<int:espacio_id>/<int:usuario_id>/', views.eliminar_usuario, name='eliminar_usuario'),
+    path('enviar_invitacion/<int:espacio_id>/', views.enviar_invitacion, name='enviar_invitacion'),
 ]
