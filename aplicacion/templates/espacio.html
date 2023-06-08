@@ -2,11 +2,22 @@
 {% load static%}
 
 {% block titulo%}
-<h1>Espacio '{{espacio.nombre}}' </h1>
+<h1 class="col-sm-12 col-md-6 col-lg-6">Espacio '{{espacio.nombre}}' </h1>
+{% if request.user.username == creador%}
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <a href="{% url 'aplicacion:disolver_espacio' id_espacio=espacio.id  %}">
+        <button type="button" class="btn btn-secondary">Disolver Espacio</button>
+    </a>
+
+</div>
+{% else %}
+<div class="col-sm-12 col-md-6 col-lg-6">
+    <a href="{% url 'aplicacion:abandonar_espacio' id_espacio=espacio.id id_user=request.user.id %}">
+        <button type="button" class="btn btn-secondary">Abandonar Espacio</button>
+    </a>
+</div>
+{% endif %}
 {% endblock %}
-
-
-
 
 {% block contenido %}
 <div class="container">
@@ -77,26 +88,26 @@
         </div>
         
     </div>
-    <div class="col-sm-12 col-md-6 col-lg-6">
-        <div class="row invitacion">
-            <p>Invita a los tuyos vía email o comparte tu código de grupo :</p>
-            <div class="col-sm-12 col-md-12 col-lg-12">
-                <p>Ingresa el correo de tu invitado para enviarle una invitación directa!</p>
-                <form method="POST" action="{% url 'aplicacion:enviar_invitacion' espacio.id %}">
-                    {% csrf_token %}
-                        <input type="email" name="correo" placeholder="Correo electrónico del invitado" required>
-                        <button type="submit">Enviar invitación</button>
-                </form>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="row invitacion">
+                <p>Invita a los tuyos vía email o comparte tu código de grupo :</p>
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <p>Ingresa el correo de tu invitado para enviarle una invitación directa!</p>
+                    <form method="POST" action="{% url 'aplicacion:enviar_invitacion' espacio.id %}">
+                        {% csrf_token %}
+                            <input type="email" name="correo" placeholder="Correo electrónico del invitado" required>
+                            <button type="submit">Enviar invitación</button>
+                    </form>
+                </div>
+                <div class="col-sm-12 col-md-12 col-lg-12 invitacion">
+                    <p>Comparte tu código para que los demás puedan unirse!</p>
+                    <input id="codigoInvitacion" class="attractive-input" type="text" value="{{ espacio.codigo_invitacion }}" disabled />
+                </div>
+                
+                <button id="copyButton">Copiar código</button>
+                
             </div>
-            <div class="col-sm-12 col-md-12 col-lg-12 invitacion">
-                <p>Comparte tu código para que los demás puedan unirse!</p>
-                <input id="codigoInvitacion" class="attractive-input" type="text" value="{{ espacio.codigo_invitacion }}" disabled />
-              </div>
-            
         </div>
-
-
-    </div>
     <hr>
 
     <div class="col-sm-12 col-md-12 col-lg-12 informacion">
@@ -128,5 +139,10 @@
 
 
 {% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/copy.js' %}"></script>
+{% endblock %}
+
 
 

@@ -45,6 +45,7 @@
                     <th>Tipo de Ingreso</th>
                     <th>Fuente de Ingreso</th>
                     <th>Monto de Ingreso</th>
+                    <th hidden>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,6 +54,11 @@
                     <td>{{ ingreso.tipo_ingreso }}</td>
                     <td>{{ ingreso.fuente_ingreso }}</td>
                     <td>{{ ingreso.monto_ingreso }}</td>
+                    <td>
+                        <a href="{% url 'aplicacion:eliminar_ingreso' ingreso.id %}">
+                            <i class='bx bxs-trash-alt' ></i>
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -65,9 +71,10 @@
         <table id="tabla-egresos" class="display">
             <thead>
                 <tr>
-                    <th>Tipo de Ingreso</th>
-                    <th>Fuente de Ingreso</th>
-                    <th>Monto de Ingreso</th>
+                    <th>Tipo de Egreso</th>
+                    <th>Fuente de Egreso</th>
+                    <th>Monto de Egreso</th>
+                    <th hidden>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -76,6 +83,11 @@
                     <td>{{ egresos.tipo_egreso }}</td>
                     <td>{{ egresos.fuente_egreso }}</td>
                     <td>{{ egresos.monto_egreso }}</td>
+                    <td>
+                        <a href="{% url 'aplicacion:eliminar_egreso' egresos.id %}">
+                            <i class='bx bxs-trash-alt' ></i>
+                        </a>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

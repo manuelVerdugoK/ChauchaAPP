@@ -29,7 +29,7 @@ def index(request):
             espacio.propietario_id = request.user.id  # Asignar el ID del usuario autenticado
             espacio.save()
             # Realiza cualquier redireccionamiento o respuesta necesaria después de guardar
-            return render(request,'index.html',{'form': form})
+            return redirect('aplicacion:ver_espacios')
     else:
         form = EspacioForm()
     return render(request, 'index.html', {'form': form})
@@ -219,6 +219,35 @@ def enviar_invitacion(request, espacio_id):
         send_mail(subject, message, from_email, recipient_list)
 
         # Realiza cualquier redireccionamiento o respuesta necesaria después de enviar la invitación
-        return redirect('aplicacion:mi_espacio', espacio_id=espacio_id)
+        return redirect('aplicacion:miEspacio', espacio_id=espacio_id)
 
     return redirect('aplicacion:index')
+
+
+
+
+def eliminar_ingreso(request, ingreso_id):
+    ingreso = Ingreso.objects.get(id=ingreso_id)
+    ingreso.delete()
+    return redirect('aplicacion:hoja_financiera')
+
+def eliminar_egreso(request, egreso_id):
+    egreso = Egreso.objects.get(id=egreso_id)
+    egreso.delete()
+    return redirect('aplicacion:hoja_financiera')
+
+
+def abandonar_espacio(request,id_espacio,id_user):
+    espacio = get_object_or_404(Espacio, id=id_espacio)
+    espacio.usuarios.remove(request.user)
+    espacio.save()
+    return redirect('aplicacion:ver_espacios')
+
+
+def disolver_espacio(request,id_espacio):
+    espacio = get_object_or_404(Espacio, id=id_espacio)
+    if request.user == espacio.propietario:
+        espacio.delete()
+        return redirect('aplicacion:ver_espacios')
+    else:
+        return redirect('aplicacion:ver_espacios')
