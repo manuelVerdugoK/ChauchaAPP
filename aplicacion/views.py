@@ -16,7 +16,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 
 from django.db.models import Sum
-import matplotlib.pyplot as plt 
+#import matplotlib.pyplot as plt 
 
 
 # Create your views here.
