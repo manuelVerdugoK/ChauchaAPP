@@ -115,6 +115,7 @@ def hoja_informacion_financiera(request):
 
 
 
+
 def mi_espacio(request,espacio_id):
     espacio = Espacio.objects.get(usuarios=request.user,id=espacio_id)
     creador = espacio.propietario.username
@@ -122,12 +123,31 @@ def mi_espacio(request,espacio_id):
     print(type(creador))
     print(type(usuarios))
 
-    
+    colors = ['rgb(72, 199, 44)', 'rgb(220, 144, 31)', 'rgb(58, 104, 168)','rgb(147, 39, 210)']   # Ejemplo de lista de colores
+
 
     # Obtener todos los ingresos y egresos de los usuarios
     ingresos = Ingreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
     egresos = Egreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+    
 
+    fuente_egreso_labels = []
+    monto_egreso_values = []
+
+    for egreso in egresos:
+        fuente_egreso_labels.append(egreso.get_fuente_egreso_display())
+        monto_egreso_values.append(float(egreso.monto_egreso))
+    fig0 = go.Figure(data=[go.Bar(x=fuente_egreso_labels, y=monto_egreso_values,marker=dict(color=colors))])
+
+    # Personaliza el diseño del gráfico
+    fig0.update_layout(
+        title="Montos asociados a fuente de egreso",
+        xaxis_title="Fuente de egreso",
+        yaxis_title="Monto de egreso",
+    )
+
+    # Convierte el gráfico en formato JSON
+    graph_json = fig0.to_json()
 
     # Calcular el total de ingresos y egresos por tipo
     total_ingresos_tipo = ingresos.values('tipo_ingreso').annotate(total=Sum('monto_ingreso')).order_by('-total')
@@ -168,6 +188,7 @@ def mi_espacio(request,espacio_id):
     # Crear el gráfico de barras dinámico para los ingresos por tipo
     # Crear el gráfico de barras dinámico para los ingresos por tipo
     bar_plot_div = crear_grafico_barras_dinamico(tipos_ingreso, montos_ingreso, 'Distribución de Ingresos por Tipo')
+    bar_plot_div_eg = crear_grafico_barras_dinamico(tipos_egreso, montos_egreso, 'Distribución de Egresos por Tipo')
 
     total_ingreso_grupo = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
     total_egreso_grupo = egresos.aggregate(total=Sum('monto_egreso'))['total']
@@ -179,11 +200,14 @@ def mi_espacio(request,espacio_id):
     else:
         subtotal = None  # O cualquier valor predeterminado que desees asignar cuando no haya valores disponibles
 
-    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div})
+    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div,'bar_plot_div_eg':bar_plot_div_eg,'graph_json': graph_json})
+
 
 
 def crear_grafico_barras_dinamico(labels, values, title):
-    fig = go.Figure(data=[go.Bar(x=labels, y=values)])
+    
+    colors = ['rgb(72, 199, 44)', 'rgb(220, 144, 31)', 'rgb(58, 104, 168)','rgb(147, 39, 210)']  # Ejemplo de lista de colores
+    fig = go.Figure(data=[go.Bar(x=labels, y=values,marker=dict(color=colors))])
     fig.update_layout(title=title, xaxis_title='Categoría', yaxis_title='Valor')
     
     # Convertir la figura en un div HTML para renderizar en la plantilla
@@ -212,7 +236,12 @@ def enviar_invitacion(request, espacio_id):
 
         # Lógica para enviar la invitación por correo electrónico
         subject = 'Invitación a unirse al grupo'
-        message = f'Hola, has sido invitado a unirte al grupo "{espacio.nombre}". Para unirte, visita el siguiente enlace: {request.build_absolute_uri(reverse("aplicacion:unirse_espacio"))}'
+        message = f'Hola,\n\nHas sido invitado por {request.user.username} a unirte al grupo "{espacio.nombre}".\n\n'
+        message += f'Para registrarte   , visita el siguiente enlace: {request.build_absolute_uri(reverse("myapp:registro"))}\n\n'
+        message += f'Código de invitación: {espacio.codigo_invitacion}\n\n'
+        message += 'Esperamos verte pronto en nuestro grupo!\n\n'
+        message += 'Saludos,\nEl equipo de ChauchaAPP'
+
         from_email = settings.DEFAULT_FROM_EMAIL
         recipient_list = [correo]
 
@@ -222,6 +251,7 @@ def enviar_invitacion(request, espacio_id):
         return redirect('aplicacion:miEspacio', espacio_id=espacio_id)
 
     return redirect('aplicacion:index')
+
 
 
 

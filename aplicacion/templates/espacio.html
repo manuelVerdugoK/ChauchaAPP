@@ -125,7 +125,7 @@
 </div>
 
     <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12 informacion">
+        <div class="col-sm-12 col-md-12 col-lg-6 informacion">
             <div class="row">
                 <h3>Graficos</h3>
                 
@@ -134,7 +134,18 @@
                 </div>
             </div>
         </div>
+        <div class="col-sm-12 col-md-12 col-lg-6 informacion">
+            <h3>Graficos</h3>
+            
+                <div class="grafico-barras">
+                    {{ bar_plot_div_eg|safe }}
+                </div>
+        </div>
+        <div id="grafico">
+            
+        </div>
     </div>
+
 </div>
 
 
@@ -142,6 +153,12 @@
 
 {% block scripts %}
 <script src="{% static 'js/copy.js' %}"></script>
+
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script>
+    var graphJSON = JSON.parse('{{ graph_json | escapejs }}');
+    Plotly.newPlot('grafico', graphJSON.data, graphJSON.layout);
+</script>
 {% endblock %}
 
 

@@ -430,3 +430,38 @@ body.dark .home .titulo .text-parrafo{
     background-color: #f2f2f2;
     color: #666;
   }
+.algo{
+    color:rgb(72, 199, 44);
+    color:rgb(220, 144, 31);
+    color:rgb(58, 104, 168);
+    color:rgb(147, 39, 210);
+}
+article{
+    padding: 15px;
+    border: 1px solid grey;
+    border-radius: 25px;
+}
+.segmento{
+    margin-left: 20px;
+}
+.img-tut{
+    margin-left: 100px;
+    padding: 15px;
+    border: 1px dotted grey;
+    border-radius: 5px;
+}
+
+.img{
+    
+    height: 300px;
+}
+.img2{
+    width: 350px;
+}
+ol li{
+    margin-left: 25px;
+}
+.okay{
+    margin-left: 55px;
+    color:green;
+}
