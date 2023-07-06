@@ -117,90 +117,169 @@ def hoja_informacion_financiera(request):
 
 
 def mi_espacio(request,espacio_id):
-    espacio = Espacio.objects.get(usuarios=request.user,id=espacio_id)
-    creador = espacio.propietario.username
-    usuarios = espacio.usuarios.all()
-    print(type(creador))
-    print(type(usuarios))
+    if request.method == 'POST':
+        form = EspacioForm(request.POST)
+        if form.is_valid():
+            espacio = form.save(commit=False)
+            espacio.propietario_id = request.user.id  # Asignar el ID del usuario autenticado
+            espacio.save()
+            # Realiza cualquier redireccionamiento o respuesta necesaria después de guardar
+            
 
-    colors = ['rgb(72, 199, 44)', 'rgb(220, 144, 31)', 'rgb(58, 104, 168)','rgb(147, 39, 210)']   # Ejemplo de lista de colores
+
+            espacio = Espacio.objects.get(usuarios=request.user,id=espacio_id)
+            creador = espacio.propietario.username
+            usuarios = espacio.usuarios.all()
+            print(type(creador))
+            print(type(usuarios))
+
+            colors = ['rgb(72, 199, 44)', 'rgb(220, 144, 31)', 'rgb(58, 104, 168)','rgb(147, 39, 210)']   # Ejemplo de lista de colores
 
 
-    # Obtener todos los ingresos y egresos de los usuarios
-    ingresos = Ingreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
-    egresos = Egreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
-    
+            # Obtener todos los ingresos y egresos de los usuarios
+            ingresos = Ingreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+            egresos = Egreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+            
 
-    fuente_egreso_labels = []
-    monto_egreso_values = []
+            fuente_egreso_labels = []
+            monto_egreso_values = []
 
-    for egreso in egresos:
-        fuente_egreso_labels.append(egreso.get_fuente_egreso_display())
-        monto_egreso_values.append(float(egreso.monto_egreso))
-    fig0 = go.Figure(data=[go.Bar(x=fuente_egreso_labels, y=monto_egreso_values,marker=dict(color=colors))])
+            for egreso in egresos:
+                fuente_egreso_labels.append(egreso.get_fuente_egreso_display())
+                monto_egreso_values.append(float(egreso.monto_egreso))
+            fig0 = go.Figure(data=[go.Bar(x=fuente_egreso_labels, y=monto_egreso_values,marker=dict(color=colors))])
 
-    # Personaliza el diseño del gráfico
-    fig0.update_layout(
-        title="Montos asociados a fuente de egreso",
-        xaxis_title="Fuente de egreso",
-        yaxis_title="Monto de egreso",
-    )
+            # Personaliza el diseño del gráfico
+            fig0.update_layout(
+                title="Montos asociados a fuente de egreso",
+                xaxis_title="Fuente de egreso",
+                yaxis_title="Monto de egreso",
+            )
 
-    # Convierte el gráfico en formato JSON
-    graph_json = fig0.to_json()
+            # Convierte el gráfico en formato JSON
+            graph_json = fig0.to_json()
 
-    # Calcular el total de ingresos y egresos por tipo
-    total_ingresos_tipo = ingresos.values('tipo_ingreso').annotate(total=Sum('monto_ingreso')).order_by('-total')
-    total_egresos_tipo = egresos.values('tipo_egreso').annotate(total=Sum('monto_egreso')).order_by('-total')
+            # Calcular el total de ingresos y egresos por tipo
+            total_ingresos_tipo = ingresos.values('tipo_ingreso').annotate(total=Sum('monto_ingreso')).order_by('-total')
+            total_egresos_tipo = egresos.values('tipo_egreso').annotate(total=Sum('monto_egreso')).order_by('-total')
 
-    # Calcular el total de ingresos y egresos
-    total_ingresos = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
-    total_egresos = egresos.aggregate(total=Sum('monto_egreso'))['total']
+            # Calcular el total de ingresos y egresos
+            total_ingresos = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
+            total_egresos = egresos.aggregate(total=Sum('monto_egreso'))['total']
 
-    # Crear una lista de tipos de ingreso y egreso
-    tipos_ingreso = [ingreso['tipo_ingreso'] for ingreso in total_ingresos_tipo]
-    tipos_egreso = [egreso['tipo_egreso'] for egreso in total_egresos_tipo]
+            # Crear una lista de tipos de ingreso y egreso
+            tipos_ingreso = [ingreso['tipo_ingreso'] for ingreso in total_ingresos_tipo]
+            tipos_egreso = [egreso['tipo_egreso'] for egreso in total_egresos_tipo]
 
-    # Crear una lista de montos de ingreso y egreso
-    montos_ingreso = [ingreso['total'] for ingreso in total_ingresos_tipo]
-    montos_egreso = [egreso['total'] for egreso in total_egresos_tipo]
+            # Crear una lista de montos de ingreso y egreso
+            montos_ingreso = [ingreso['total'] for ingreso in total_ingresos_tipo]
+            montos_egreso = [egreso['total'] for egreso in total_egresos_tipo]
 
-    # Calcular los porcentajes de ingresos y egresos
-    porcentajes_ingreso = [(monto / total_ingresos) * 100 for monto in montos_ingreso]
-    porcentajes_egreso = [(monto / total_egresos) * 100 for monto in montos_egreso]
+            # Calcular los porcentajes de ingresos y egresos
+            porcentajes_ingreso = [(monto / total_ingresos) * 100 for monto in montos_ingreso]
+            porcentajes_egreso = [(monto / total_egresos) * 100 for monto in montos_egreso]
 
-    # Crear el gráfico de torta para los ingresos por tipo
-    fig1 = go.Figure(data=[go.Pie(labels=tipos_ingreso, values=porcentajes_ingreso)])
-    fig1.update_layout(title='Distribución de Ingresos por Tipo')
+            # Crear el gráfico de torta para los ingresos por tipo
+            fig1 = go.Figure(data=[go.Pie(labels=tipos_ingreso, values=porcentajes_ingreso)])
+            fig1.update_layout(title='Distribución de Ingresos por Tipo')
 
-    # Crear el gráfico de torta para los egresos por tipo
-    fig2 = go.Figure(data=[go.Pie(labels=tipos_egreso, values=porcentajes_egreso)])
-    fig2.update_layout(title='Distribución de Egresos por Tipo')
+            # Crear el gráfico de torta para los egresos por tipo
+            fig2 = go.Figure(data=[go.Pie(labels=tipos_egreso, values=porcentajes_egreso)])
+            fig2.update_layout(title='Distribución de Egresos por Tipo')
 
-    # Crear una figura con subplots de tipo "pie" para mostrar ambos gráficos
-    fig = make_subplots(rows=1, cols=2, subplot_titles=['Ingresos', 'Egresos'], specs=[[{'type': 'pie'}, {'type': 'pie'}]])
-    fig.add_trace(fig1.data[0], row=1, col=1)
-    fig.add_trace(fig2.data[0], row=1, col=2)
+            # Crear una figura con subplots de tipo "pie" para mostrar ambos gráficos
+            fig = make_subplots(rows=1, cols=2, subplot_titles=['Ingresos', 'Egresos'], specs=[[{'type': 'pie'}, {'type': 'pie'}]])
+            fig.add_trace(fig1.data[0], row=1, col=1)
+            fig.add_trace(fig2.data[0], row=1, col=2)
 
-    # Convertir la figura en un div HTML para renderizar en la plantilla
-    plot_div = fig.to_html(full_html=False)
+            # Convertir la figura en un div HTML para renderizar en la plantilla
+            plot_div = fig.to_html(full_html=False)
 
-    # Crear el gráfico de barras dinámico para los ingresos por tipo
-    # Crear el gráfico de barras dinámico para los ingresos por tipo
-    bar_plot_div = crear_grafico_barras_dinamico(tipos_ingreso, montos_ingreso, 'Distribución de Ingresos por Tipo')
-    bar_plot_div_eg = crear_grafico_barras_dinamico(tipos_egreso, montos_egreso, 'Distribución de Egresos por Tipo')
+            # Crear el gráfico de barras dinámico para los ingresos por tipo
+            # Crear el gráfico de barras dinámico para los ingresos por tipo
+            bar_plot_div = crear_grafico_barras_dinamico(tipos_ingreso, montos_ingreso, 'Distribución de Ingresos por Tipo')
+            bar_plot_div_eg = crear_grafico_barras_dinamico(tipos_egreso, montos_egreso, 'Distribución de Egresos por Tipo')
 
-    total_ingreso_grupo = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
-    total_egreso_grupo = egresos.aggregate(total=Sum('monto_egreso'))['total']
+            total_ingreso_grupo = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
+            total_egreso_grupo = egresos.aggregate(total=Sum('monto_egreso'))['total']
 
-    #subtotal = total_ingreso_grupo - total_egreso_grupo
+            #subtotal = total_ingreso_grupo - total_egreso_grupo
 
-    if total_ingreso_grupo is not None and total_egreso_grupo is not None:
-        subtotal = total_ingreso_grupo - total_egreso_grupo
+            if total_ingreso_grupo is not None and total_egreso_grupo is not None:
+                subtotal = total_ingreso_grupo - total_egreso_grupo
+            else:
+                subtotal = None  # O cualquier valor predeterminado que desees asignar cuando no haya valores disponibles
+        return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div,'bar_plot_div_eg':bar_plot_div_eg,'graph_json': graph_json,'form': form})
+
     else:
-        subtotal = None  # O cualquier valor predeterminado que desees asignar cuando no haya valores disponibles
+        form = EspacioForm()
 
-    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div,'bar_plot_div_eg':bar_plot_div_eg,'graph_json': graph_json})
+        espacio = Espacio.objects.get(usuarios=request.user,id=espacio_id)
+        creador = espacio.propietario.username
+        usuarios = espacio.usuarios.all()
+        print(type(creador))
+        print(type(usuarios))
+
+        colors = ['rgb(72, 199, 44)', 'rgb(220, 144, 31)', 'rgb(58, 104, 168)','rgb(147, 39, 210)']   # Ejemplo de lista de colores
+
+
+        # Obtener todos los ingresos y egresos de los usuarios
+        ingresos = Ingreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+        egresos = Egreso.objects.filter(hoja_informacion_financiera__propietario__in=usuarios)
+        
+        fuente_egreso_labels = []
+        monto_egreso_values = []
+        for egreso in egresos:
+            fuente_egreso_labels.append(egreso.get_fuente_egreso_display())
+            monto_egreso_values.append(float(egreso.monto_egreso))
+        fig0 = go.Figure(data=[go.Bar(x=fuente_egreso_labels, y=monto_egreso_values,marker=dict(color=colors))])
+        # Personaliza el diseño del gráfico
+        fig0.update_layout(
+            title="Montos asociados a fuente de egreso",
+            xaxis_title="Fuente de egreso",
+            yaxis_title="Monto de egreso",
+        )
+        # Convierte el gráfico en formato JSON
+        graph_json = fig0.to_json()
+        # Calcular el total de ingresos y egresos por tipo
+        total_ingresos_tipo = ingresos.values('tipo_ingreso').annotate(total=Sum('monto_ingreso')).order_by('-total')
+        total_egresos_tipo = egresos.values('tipo_egreso').annotate(total=Sum('monto_egreso')).order_by('-total')
+        # Calcular el total de ingresos y egresos
+        total_ingresos = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
+        total_egresos = egresos.aggregate(total=Sum('monto_egreso'))['total']
+        # Crear una lista de tipos de ingreso y egreso
+        tipos_ingreso = [ingreso['tipo_ingreso'] for ingreso in total_ingresos_tipo]
+        tipos_egreso = [egreso['tipo_egreso'] for egreso in total_egresos_tipo]
+        # Crear una lista de montos de ingreso y egreso
+        montos_ingreso = [ingreso['total'] for ingreso in total_ingresos_tipo]
+        montos_egreso = [egreso['total'] for egreso in total_egresos_tipo]
+        # Calcular los porcentajes de ingresos y egresos
+        porcentajes_ingreso = [(monto / total_ingresos) * 100 for monto in montos_ingreso]
+        porcentajes_egreso = [(monto / total_egresos) * 100 for monto in montos_egreso]
+        # Crear el gráfico de torta para los ingresos por tipo
+        fig1 = go.Figure(data=[go.Pie(labels=tipos_ingreso, values=porcentajes_ingreso)])
+        fig1.update_layout(title='Distribución de Ingresos por Tipo')
+        # Crear el gráfico de torta para los egresos por tipo
+        fig2 = go.Figure(data=[go.Pie(labels=tipos_egreso, values=porcentajes_egreso)])
+        fig2.update_layout(title='Distribución de Egresos por Tipo')
+        # Crear una figura con subplots de tipo "pie" para mostrar ambos gráficos
+        fig = make_subplots(rows=1, cols=2, subplot_titles=['Ingresos', 'Egresos'], specs=[[{'type': 'pie'}, {'type': 'pie'}]])
+        fig.add_trace(fig1.data[0], row=1, col=1)
+        fig.add_trace(fig2.data[0], row=1, col=2)
+        # Convertir la figura en un div HTML para renderizar en la plantilla
+        plot_div = fig.to_html(full_html=False)
+        # Crear el gráfico de barras dinámico para los ingresos por tipo
+        # Crear el gráfico de barras dinámico para los ingresos por tipo
+        bar_plot_div = crear_grafico_barras_dinamico(tipos_ingreso, montos_ingreso, 'Distribución de Ingresos por Tipo')
+        bar_plot_div_eg = crear_grafico_barras_dinamico(tipos_egreso, montos_egreso, 'Distribución de Egresos por Tipo')
+        total_ingreso_grupo = ingresos.aggregate(total=Sum('monto_ingreso'))['total']
+        total_egreso_grupo = egresos.aggregate(total=Sum('monto_egreso'))['total']
+        #subtotal = total_ingreso_grupo - total_egreso_grupo
+        if total_ingreso_grupo is not None and total_egreso_grupo is not None:
+            subtotal = total_ingreso_grupo - total_egreso_grupo
+        else:
+            subtotal = None  # O cualquier valor predeterminado que desees asignar cuando no haya valores disponibles
+    return render(request, 'espacio.html', {'espacio': espacio, 'usuarios': usuarios,'creador':creador,'total_ing':total_ingreso_grupo,'total_eg':total_egreso_grupo,'subtotal':subtotal, 'plot_div': plot_div,'bar_plot_div': bar_plot_div,'bar_plot_div_eg':bar_plot_div_eg,'graph_json': graph_json,'form': form})
 
 
 
@@ -267,7 +346,7 @@ def eliminar_egreso(request, egreso_id):
     return redirect('aplicacion:hoja_financiera')
 
 
-def abandonar_espacio(request,id_espacio,id_user):
+def abandonar_espacio(request,id_espacio):
     espacio = get_object_or_404(Espacio, id=id_espacio)
     espacio.usuarios.remove(request.user)
     espacio.save()
