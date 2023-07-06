@@ -92,9 +92,14 @@ def hoja_informacion_financiera(request):
     egresos = hoja.egreso_set.all()
     
     if request.method == 'POST':
+        form = EspacioForm(request.POST)
         form1 = IngresoForm(request.POST)
         form2 = EgresoForm(request.POST)
-        
+        if form.is_valid():
+            espacio = form.save(commit=False)
+            espacio.propietario_id = request.user.id  # Asignar el ID del usuario autenticado
+            espacio.save()
+
         if form1.is_valid():
             ingreso = form1.save(commit=False)
             ingreso.hoja_informacion_financiera = hoja
@@ -108,10 +113,11 @@ def hoja_informacion_financiera(request):
             return redirect('aplicacion:hoja_financiera')
         
     else:
+        form = EspacioForm()
         form1 = IngresoForm()
         form2 = EgresoForm()
     
-    return render(request, 'hoja_financiera.html', {'ingresos': ingresos, 'egresos': egresos, 'form': form1, 'form2': form2})
+    return render(request, 'hoja_financiera.html', {'ingresos': ingresos, 'egresos': egresos,'form': form, 'form1': form1, 'form2': form2})
 
 
 
